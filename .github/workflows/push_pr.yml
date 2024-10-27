@@ -52,6 +52,9 @@ jobs:
         with:
           filename: coverage.xml
           badge: true
-          format: text
-          indicators: true
+          fail_below_min: false
+          format: markdown
+          hide_branch_rate: true
+          hide_complexity: true
           output: both
+          thresholds: '60 80'
