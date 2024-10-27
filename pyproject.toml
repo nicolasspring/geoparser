@@ -34,3 +34,6 @@ pytest-cov = "^5.0.0"
 
 [tool.isort]
 profile = "black"
+
+[tool.pytest.ini_options]
+addopts = "--cov=geoparser --cov-report html"
