@@ -2,6 +2,17 @@
 
 Geoparser is a Python library for geoparsing unstructured texts. It employs spaCy for toponym recognition and fine-tuned SentenceTransformer models for toponym resolution.
 
+<p align="center">
+<a href="https://pypi.org/project/geoparser" target="_blank">
+    <img src="https://img.shields.io/pypi/v/geoparser?color=%2334D058&label=pypi%20package" alt="Package version">
+</a>
+<a href="https://pypi.org/project/geoparser" target="_blank">
+    <img src="https://img.shields.io/pypi/pyversions/geoparser?color=%2334D058" alt="Supported Python versions">
+</a>
+</p>
+
+---
+
 ## Installation
 
 Install Geoparser using pip:
