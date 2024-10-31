@@ -40,3 +40,4 @@ addopts = "--cov=geoparser --cov-report html"
 
 [tool.coverage.run]
 omit = ["geoparser/tests/*"]
+relative_files = true
