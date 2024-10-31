@@ -37,3 +37,6 @@ profile = "black"
 
 [tool.pytest.ini_options]
 addopts = "--cov=geoparser --cov-report html"
+
+[tool.coverage.run]
+omit = ["geoparser/tests/*"]
