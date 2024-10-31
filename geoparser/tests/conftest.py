@@ -5,8 +5,8 @@ import pandas as pd
 import py
 import pytest
 
+from geoparser.gazetteers import GeoNames, SwissNames3D
 from geoparser.geodoc import GeoDoc
-from geoparser.geonames import GeoNames
 from geoparser.geoparser import Geoparser
 from geoparser.tests.utils import get_static_test_file
 from geoparser.trainer import GeoparserTrainer
@@ -25,6 +25,17 @@ def geodocs(geoparser_real_data: Geoparser) -> list[GeoDoc]:
     ]
     docs = geoparser_real_data.parse(texts)
     return docs
+
+
+@pytest.fixture(scope="function")
+def geonames_patched() -> GeoNames:
+    gazetteer = GeoNames()
+    tmpdir = py.path.local(tempfile.mkdtemp())
+    gazetteer.data_dir = str(
+        get_static_test_file(Path("gazetteers") / Path("geonames_1000"))
+    )
+    gazetteer.db_path = str(tmpdir / Path(gazetteer.db_path).name)
+    return gazetteer
 
 
 @pytest.fixture(scope="session")
@@ -68,10 +79,15 @@ def geoparser_real_data(geonames_real_data: GeoNames) -> Geoparser:
     return geoparser_real_data
 
 
-@pytest.fixture(scope="session")
-def test_chunk_full() -> pd.DataFrame:
-    data = {"col1": [1, 2, 3], "col2": ["a", "b", "c"]}
-    return pd.DataFrame.from_dict(data)
+@pytest.fixture(scope="function")
+def swissnames3d_patched() -> SwissNames3D:
+    gazetteer = SwissNames3D()
+    tmpdir = py.path.local(tempfile.mkdtemp())
+    gazetteer.data_dir = str(
+        get_static_test_file(Path("gazetteers") / Path("swissnames_subset"))
+    )
+    gazetteer.db_path = str(tmpdir / Path(gazetteer.db_path).name)
+    return gazetteer
 
 
 @pytest.fixture(scope="session")
