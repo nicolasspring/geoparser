@@ -6,6 +6,7 @@ from flask.testing import FlaskClient
 
 from geoparser.annotator.app import app, get_session
 from geoparser.constants import DEFAULT_SESSION_SETTINGS
+from tests.utils import get_static_test_file
 
 
 @pytest.fixture(scope="session")
@@ -33,16 +34,28 @@ def test_get_session():
 
 def test_index(client: FlaskClient):
     response = client.get("/")
-    # returns html template of title page
+    # no errors: returns index html template
     assert b"<title>Geoparser Annotator</title>" in response.data
 
 
 def test_start_new_session_get(client: FlaskClient):
     response = client.get("/start_new_session")
-    # returns html template of new session page
+    # no errors: returns start_new_session html template
     assert b"<title>Start New Session</title>" in response.data
 
 
 def test_start_new_session_post(client: FlaskClient):
-    response = client.post("/start_new_session")
-    pass
+    filename = "annotator_doc0.txt"
+    response = client.post(
+        "/start_new_session",
+        data={
+            "gazetteer": "geonames",
+            "spacy_model": "en_core_web_sm",
+            "files[]": [(open(get_static_test_file(filename), "rb"), filename)],
+        },
+        content_type="multipart/form-data",
+    )
+    # redirected to annotate page for first document
+    assert b"/annotate/" in response.data
+    assert b"?doc_index=0" in response.data
+    assert True is False
