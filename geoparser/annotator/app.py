@@ -5,8 +5,8 @@ import threading
 import uuid
 import webbrowser
 from datetime import datetime
-
-from fastapi import FastAPI, Request
+import typing as t
+from fastapi import FastAPI, Request, UploadFile, Form
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from spacy.util import get_installed_models
@@ -38,7 +38,7 @@ sessions_cache = SessionsCache()
 spacy_models = list(get_installed_models())
 
 
-async def get_session(gazetteer: str):
+def get_session(gazetteer: str):
     session_id = uuid.uuid4().hex
     session = {
         "session_id": session_id,
@@ -66,19 +66,19 @@ async def start_new_session_get(request: Request):
 
 
 @app.post("/start_new_session")
-def start_new_session_post(request: Request):
-    uploaded_files = request.files.getlist("files[]")
-
-    # Get selected gazetteer and spacy model
-    selected_gazetteer = request.form.get("gazetteer")
-    selected_spacy_model = request.form.get("spacy_model")
+def start_new_session_post(
+    request: Request,
+    files: list[UploadFile],
+    gazetteer: t.Annotated[str, Form()],
+    spacy_model: t.Annotated[str, Form()],
+):
 
     # Re-initialize gazetteer with selected option
-    annotator.gazetteer = annotator.setup_gazetteer(selected_gazetteer)
+    annotator.gazetteer = annotator.setup_gazetteer(gazetteer)
 
     # Process uploaded files and create a new session
-    session = get_session(selected_gazetteer)
-    for document in annotator.parse_files(uploaded_files, selected_spacy_model):
+    session = get_session(gazetteer)
+    for document in annotator.parse_files(files, spacy_model):
         session["documents"].append(document)
 
     # Save session to cache
@@ -87,7 +87,6 @@ def start_new_session_post(request: Request):
     redirect_url = request.url_for(
         "annotate", session_id=session["session_id"], doc_index=0
     )
-    redirect_url = "http://127.0.0.1:5000"
     return RedirectResponse(redirect_url)
 
 
