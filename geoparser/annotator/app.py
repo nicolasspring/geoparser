@@ -65,7 +65,7 @@ async def start_new_session_get(request: Request):
     )
 
 
-@app.post("/start_new_session")
+@app.post("/start_new_session", tags=["pages"])
 def start_new_session_post(
     request: Request,
     files: list[UploadFile],
@@ -90,10 +90,14 @@ def start_new_session_post(
     return RedirectResponse(redirect_url)
 
 
-# @app.get("/continue_session")
-# def continue_session_get():
-#     cached_sessions = sessions_cache.get_cached_sessions()
-#     return render_template("continue_session.html", cached_sessions=cached_sessions)
+@app.get("/continue_session", tags=["pages"])
+def continue_session_get(request: Request):
+    cached_sessions = sessions_cache.get_cached_sessions()
+    return templates.TemplateResponse(
+        request=request,
+        name="continue_session.html",
+        context={"cached_sessions": cached_sessions},
+    )
 
 
 # @app.post("/continue_session")
